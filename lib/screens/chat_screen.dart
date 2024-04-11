@@ -6,8 +6,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class ChatScreen extends ConsumerStatefulWidget {
-  const ChatScreen({super.key, required this.channelName});
+  const ChatScreen({
+    super.key,
+    required this.channelName,
+    required this.channelId,
+  });
   final String channelName;
+  final String channelId;
   @override
   ConsumerState<ChatScreen> createState() {
     return _ChatScreenState();
@@ -20,14 +25,19 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final List<Chat> data = ref.watch(chatData);
+    final List<Chat> data = ref
+        .watch(chatData)
+        .where((e) => e.channelId == widget.channelId)
+        .toList();
 
     void submit() {
       if (_fromKey.currentState!.validate()) {
         _fromKey.currentState!.save();
       }
 
-      ref.read(chatData.notifier).getChat(_msg);
+      ref
+          .read(chatData.notifier)
+          .getChat(msg: _msg, channelId: widget.channelId, userId: "UsedId");
 
       print(_msg);
     }
