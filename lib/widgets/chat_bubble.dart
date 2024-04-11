@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 class ChatBubble extends StatefulWidget {
-  const ChatBubble({super.key});
+  const ChatBubble({super.key, required this.msg});
+  final String msg;
   @override
   State<ChatBubble> createState() {
     return _ChatBubbleState();
@@ -24,10 +25,10 @@ class _ChatBubbleState extends State<ChatBubble> {
               horizontal: 10,
               vertical: 10,
             ),
-            child: const Column(
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
+                const Row(
                   children: [
                     Text(
                       "Name",
@@ -47,8 +48,8 @@ class _ChatBubbleState extends State<ChatBubble> {
                   ],
                 ),
                 Text(
-                  "Its some message content",
-                  style: TextStyle(
+                  widget.msg,
+                  style: const TextStyle(
                     color: Colors.white,
                   ),
                 ),

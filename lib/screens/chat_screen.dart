@@ -1,19 +1,36 @@
+import 'package:ciscord/models/chat_model.dart';
+import 'package:ciscord/provider/data_provider.dart';
 import 'package:ciscord/widgets/chat_bubble.dart';
 import 'package:ciscord/widgets/drawer.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class ChatScreen extends StatefulWidget {
+class ChatScreen extends ConsumerStatefulWidget {
   const ChatScreen({super.key, required this.channelName});
   final String channelName;
   @override
-  State<ChatScreen> createState() {
+  ConsumerState<ChatScreen> createState() {
     return _ChatScreenState();
   }
 }
 
-class _ChatScreenState extends State<ChatScreen> {
+class _ChatScreenState extends ConsumerState<ChatScreen> {
+  final _fromKey = GlobalKey<FormState>();
+  String _msg = "";
+
   @override
   Widget build(BuildContext context) {
+    final List<Chat> data = ref.watch(chatData);
+
+    void submit() {
+      if (_fromKey.currentState!.validate()) {
+        _fromKey.currentState!.save();
+      }
+
+      ref.read(chatData.notifier).getChat(_msg);
+      print(_msg);
+    }
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.background,
@@ -29,10 +46,12 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
             child: ListView.builder(
               reverse: true,
-              itemCount: 5,
+              itemCount: data.length,
               itemBuilder: (context, index) {
                 return Expanded(
-                  child: ChatBubble(),
+                  child: ChatBubble(
+                    msg: data[index].message,
+                  ),
                 );
               },
             ),
@@ -68,12 +87,20 @@ class _ChatScreenState extends State<ChatScreen> {
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 10),
                         child: Form(
+                          key: _fromKey,
                           child: TextFormField(
                             maxLines: null,
                             keyboardType: TextInputType.multiline,
                             decoration: const InputDecoration(
                               border: InputBorder.none,
                             ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return "Please enter something";
+                              }
+                              return null;
+                            },
+                            onSaved: (newValue) => _msg = newValue!,
                           ),
                         ),
                       ),
@@ -81,7 +108,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   ),
                   //MARK:send chat
                   IconButton(
-                    onPressed: () {},
+                    onPressed: submit,
                     icon: const Icon(
                       Icons.send_rounded,
                       color: Colors.white,
