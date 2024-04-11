@@ -29,7 +29,7 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
             child: ListView.builder(
               reverse: true,
-              itemCount: 1,
+              itemCount: 5,
               itemBuilder: (context, index) {
                 return Expanded(
                   child: ChatBubble(),
@@ -56,22 +56,24 @@ class _ChatScreenState extends State<ChatScreen> {
                         vertical: 20,
                         horizontal: 5,
                       ),
-                      height: 50,
                       width: double.infinity,
                       decoration: const BoxDecoration(
-                        color: Colors.white,
+                        color: Colors.grey,
                         borderRadius: BorderRadius.all(
                           Radius.circular(10),
                         ),
                       ),
                       alignment: Alignment.center,
                       //MARK:form work
-                      child: Form(
-                        child: TextFormField(
-                          maxLines: null,
-                          keyboardType: TextInputType.multiline,
-                          decoration: const InputDecoration(
-                            border: InputBorder.none,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        child: Form(
+                          child: TextFormField(
+                            maxLines: null,
+                            keyboardType: TextInputType.multiline,
+                            decoration: const InputDecoration(
+                              border: InputBorder.none,
+                            ),
                           ),
                         ),
                       ),

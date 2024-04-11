@@ -20,20 +20,38 @@ class _ChatBubbleState extends State<ChatBubble> {
           ),
           Container(
             alignment: Alignment.topLeft,
-            padding: const EdgeInsets.symmetric(horizontal: 10),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 10,
+              vertical: 10,
+            ),
             child: const Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
                   children: [
-                    Text("Name"),
+                    Text(
+                      "Name",
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
                     SizedBox(
                       width: 20,
                     ),
-                    Text("date"),
+                    Text(
+                      "date",
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
                   ],
                 ),
-                Text("Its some message content"),
+                Text(
+                  "Its some message content",
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                ),
               ],
             ),
           )
