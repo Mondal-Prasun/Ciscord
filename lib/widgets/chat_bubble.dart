@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 
 class ChatBubble extends StatefulWidget {
-  const ChatBubble({super.key, required this.msg});
+  const ChatBubble({super.key, required this.msg, required this.date});
   final String msg;
+  final String date;
   @override
   State<ChatBubble> createState() {
     return _ChatBubbleState();
@@ -28,20 +29,20 @@ class _ChatBubbleState extends State<ChatBubble> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Row(
+                Row(
                   children: [
-                    Text(
+                    const Text(
                       "Name",
                       style: TextStyle(
                         color: Colors.white,
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 20,
                     ),
                     Text(
-                      "date",
-                      style: TextStyle(
+                      widget.date,
+                      style: const TextStyle(
                         color: Colors.white,
                       ),
                     ),

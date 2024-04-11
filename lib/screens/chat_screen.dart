@@ -28,6 +28,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
       }
 
       ref.read(chatData.notifier).getChat(_msg);
+
       print(_msg);
     }
 
@@ -45,12 +46,12 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               bottom: 80,
             ),
             child: ListView.builder(
-              reverse: true,
               itemCount: data.length,
               itemBuilder: (context, index) {
                 return Expanded(
                   child: ChatBubble(
                     msg: data[index].message,
+                    date: data[index].date,
                   ),
                 );
               },
