@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "116911756669",
+    "project_id": "ciscord-74ece",
+    "storage_bucket": "ciscord-74ece.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:116911756669:android:6b4a5bf311cbb29be36814",
+        "android_client_info": {
+          "package_name": "com.example.ciscord"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDx6xltFyJU83pZvezlr2JdFGVJoPEVw1U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
