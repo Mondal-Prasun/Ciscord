@@ -39,7 +39,6 @@ dependencies:
   lottie: ^3.1.0
   uuid: ^4.4.0
   firebase_core: ^2.29.0
-  firebase_auth: ^4.19.1
 
 dev_dependencies:
   flutter_test:
