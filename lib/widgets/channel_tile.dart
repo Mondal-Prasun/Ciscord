@@ -24,11 +24,14 @@ class ChannelTile extends StatelessWidget {
           ),
         );
       },
-      child: ListTile(
-        title: Text(
-          channelName,
-          style: const TextStyle(
-            color: Colors.white,
+      child: Card(
+        color: const Color.fromARGB(21, 0, 0, 0),
+        child: ListTile(
+          title: Text(
+            channelName,
+            style: const TextStyle(
+              color: Colors.white,
+            ),
           ),
         ),
       ),
