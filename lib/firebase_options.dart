@@ -47,9 +47,9 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyDARhS1GztkDnz7-B2OvqmZNFfeM8hoSSE',
-    appId: '1:116911756669:web:aa9e21a272ff4017e36814',
-    messagingSenderId: '116911756669',
+    apiKey: '*************************',
+    appId: '***********************',
+    messagingSenderId: '***********',
     projectId: 'ciscord-74ece',
     authDomain: 'ciscord-74ece.firebaseapp.com',
     storageBucket: 'ciscord-74ece.appspot.com',
@@ -57,17 +57,17 @@ class DefaultFirebaseOptions {
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyDx6xltFyJU83pZvezlr2JdFGVJoPEVw1U',
-    appId: '1:116911756669:android:6b4a5bf311cbb29be36814',
-    messagingSenderId: '116911756669',
+    apiKey: '************************',
+    appId: '********************',
+    messagingSenderId: '*********',
     projectId: 'ciscord-74ece',
     storageBucket: 'ciscord-74ece.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyA5wCffqkH808kamp9ykmrxrS238hgKvoo',
-    appId: '1:116911756669:ios:b02204a1ef83b25ee36814',
-    messagingSenderId: '116911756669',
+    apiKey: '*******************************',
+    appId: '*************************
+    messagingSenderId: '****************',
     projectId: 'ciscord-74ece',
     storageBucket: 'ciscord-74ece.appspot.com',
     iosBundleId: 'com.example.ciscord',
