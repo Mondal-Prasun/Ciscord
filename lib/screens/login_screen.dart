@@ -1,4 +1,5 @@
 import 'package:ciscord/screens/default_screen.dart';
+import 'package:ciscord/screens/user_details.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -12,7 +13,7 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final _fromkey = GlobalKey<FormState>();
-  String _userName = "";
+
   String _userEmail = "";
   String _userPassword = "";
   bool _isUser = false;
@@ -36,7 +37,7 @@ class _LoginScreenState extends State<LoginScreen> {
           (value) {
             Navigator.of(context).pushReplacement(
               MaterialPageRoute(
-                builder: (context) => const DefaultScreen(),
+                builder: (context) => const UserDetailsScreen(),
               ),
             );
           },
@@ -59,14 +60,13 @@ class _LoginScreenState extends State<LoginScreen> {
         FirebaseAuth.instance
             .signInWithEmailAndPassword(
                 email: _userEmail, password: _userPassword)
-            .then(
-              (value) => Navigator.of(context).pushReplacement(
-                MaterialPageRoute(
-                  builder: (context) => const DefaultScreen(),
-                ),
-              ),
-            )
-            .onError((error, stackTrace) {
+            .then((value) {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (context) => const DefaultScreen(),
+            ),
+          );
+        }).onError((error, stackTrace) {
           setState(() {
             _checking = false;
           });
@@ -90,16 +90,6 @@ class _LoginScreenState extends State<LoginScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Padding(
-                padding: const EdgeInsets.symmetric(vertical: 30),
-                child: Visibility(
-                  visible: _isUser == true ? false : true,
-                  child: const CircleAvatar(
-                    backgroundColor: Colors.white,
-                    radius: 60,
-                  ),
-                ),
-              ),
-              Padding(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 50,
                 ),
@@ -109,40 +99,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     key: _fromkey,
                     child: Column(
                       children: [
-                        Visibility(
-                          visible: _isUser == true ? false : true,
-                          child: Container(
-                            //MARK:User name
-                            margin: const EdgeInsets.symmetric(horizontal: 10),
-                            alignment: Alignment.center,
-                            padding: const EdgeInsets.symmetric(horizontal: 10),
-                            child: TextFormField(
-                              cursorColor: Colors.white,
-                              maxLength: 40,
-                              style: const TextStyle(color: Colors.white),
-                              decoration: const InputDecoration(
-                                hintText: "Name",
-                                hintStyle: TextStyle(
-                                  color: Color.fromARGB(170, 255, 255, 255),
-                                ),
-                                helperText: "enter name",
-                                helperStyle: TextStyle(color: Colors.white),
-                              ),
-                              validator: (value) {
-                                if (value == null ||
-                                    value.isEmpty ||
-                                    value.length < 3) {
-                                  return "Please enter atleast 3 charecter";
-                                }
-                                return null;
-                              },
-                              onSaved: (newValue) => _userName = newValue!,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 30,
-                        ),
                         Container(
                           //MARK:user email
                           margin: const EdgeInsets.symmetric(horizontal: 10),

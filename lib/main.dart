@@ -1,4 +1,3 @@
-import 'package:ciscord/screens/default_screen.dart';
 import 'package:ciscord/screens/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
