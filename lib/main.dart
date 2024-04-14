@@ -1,4 +1,5 @@
 import 'package:ciscord/screens/login_screen.dart';
+import 'package:ciscord/screens/user_details.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';

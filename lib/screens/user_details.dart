@@ -1,5 +1,10 @@
+import 'dart:io';
+
+import 'package:ciscord/screens/default_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 class UserDetailsScreen extends StatefulWidget {
   const UserDetailsScreen({super.key});
@@ -12,6 +17,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
   String _userName = "";
   bool _checking = false;
   final _fromkey = GlobalKey<FormState>();
+  File? _userImage;
 
   void onSave() async {
     if (_fromkey.currentState!.validate()) {
@@ -21,11 +27,68 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
         if (user != null) {
           print(user.uid);
 
-          user.updateDisplayName(_userName).then((value) {
-            print("done");
+          await user.updateDisplayName(_userName);
+          //save image
+
+          final storageRef = FirebaseStorage.instance.ref();
+          final userImageref = storageRef.child("images/${user.uid}/userImage");
+
+          userImageref.putFile(_userImage!).then((p0) {
+            setState(() {
+              _checking = true;
+            });
+
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(
+                builder: (context) => const DefaultScreen(),
+              ),
+            );
+          }).onError((error, stackTrace) {
+            ScaffoldMessenger.of(context).clearSnackBars();
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text("Somthing went wrong"),
+              ),
+            );
           });
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("User not found"),
+            ),
+          );
         }
       });
+    }
+  }
+
+  Widget ciculerAvatar = Image.asset("lib/assets/avatar.png");
+
+  void pickImage() async {
+    final picker = ImagePicker();
+    final image = await picker.pickImage(source: ImageSource.gallery);
+    print(image);
+    if (image != null) {
+      _userImage = File(image.path);
+      // print(_userImage!.path);
+      setState(
+        () {
+          ciculerAvatar = Container(
+            width: double.infinity,
+            decoration: const BoxDecoration(
+              borderRadius: BorderRadius.all(
+                Radius.circular(60),
+              ),
+            ),
+            child: Image.file(
+              width: double.infinity,
+              height: double.infinity,
+              _userImage!,
+              fit: BoxFit.fill,
+            ),
+          );
+        },
+      );
     }
   }
 
@@ -36,12 +99,16 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Padding(
-              padding: EdgeInsets.symmetric(vertical: 30),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 15),
               child: CircleAvatar(
-                backgroundColor: Colors.white,
                 radius: 60,
+                child: ciculerAvatar,
               ),
+            ),
+            TextButton(
+              onPressed: pickImage,
+              child: const Text("Choose image"),
             ),
             Form(
               key: _fromkey,
