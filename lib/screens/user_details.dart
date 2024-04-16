@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:ciscord/screens/default_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -14,6 +16,8 @@ class UserDetailsScreen extends StatefulWidget {
 }
 
 class _UserDetailsScreenState extends State<UserDetailsScreen> {
+  final firebaseApp = Firebase.app();
+  late FirebaseDatabase rtdb;
   String _userName = "";
   bool _checking = false;
   final _fromkey = GlobalKey<FormState>();
@@ -38,11 +42,16 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
               _checking = true;
             });
 
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(
-                builder: (context) => const DefaultScreen(),
-              ),
-            );
+            final userRef = rtdb.ref("users/${user.uid}");
+            userRef.set({
+              "userName": _userName,
+            }).then((value) {
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(
+                  builder: (context) => const DefaultScreen(),
+                ),
+              );
+            });
           }).onError((error, stackTrace) {
             ScaffoldMessenger.of(context).clearSnackBars();
             ScaffoldMessenger.of(context).showSnackBar(
@@ -60,6 +69,15 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
         }
       });
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    rtdb = FirebaseDatabase.instanceFor(
+        app: firebaseApp,
+        databaseURL:
+            'https://ciscord-74ece-default-rtdb.asia-southeast1.firebasedatabase.app/');
   }
 
   Widget ciculerAvatar = Image.asset("lib/assets/avatar.png");

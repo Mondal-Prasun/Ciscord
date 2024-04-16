@@ -4,6 +4,8 @@ import 'package:ciscord/screens/login_screen.dart';
 import 'package:ciscord/widgets/add_channel.dart';
 import 'package:ciscord/widgets/channel_tile.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -28,13 +30,12 @@ class _ChannelDrawerState extends ConsumerState<ChannelDrawer> {
       ),
     ),
   );
-  String? _userImage;
-  String? _userName;
+  String? _userId;
 
   void loadUserCard() {
     FirebaseAuth.instance.authStateChanges().listen((user) async {
       if (user != null) {
-        _userName = user.displayName;
+        _userId = user.uid;
 
         final storageRef = FirebaseStorage.instance.ref();
 
@@ -73,6 +74,7 @@ class _ChannelDrawerState extends ConsumerState<ChannelDrawer> {
   void initState() {
     super.initState();
     loadUserCard();
+    ref.read(channelData.notifier).loadChannels();
   }
 
   void createChannel() async {
@@ -81,7 +83,11 @@ class _ChannelDrawerState extends ConsumerState<ChannelDrawer> {
         builder: (context) => const AddChannel(),
       ),
     );
-    ref.watch(channelData.notifier).addChannelDirect(channelDetails);
+
+    ref.watch(channelData.notifier).addChannelDirect(
+          channelDetails,
+          _userId!,
+        );
   }
 
   void logOutUser() {
