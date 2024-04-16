@@ -1,8 +1,11 @@
+import 'package:ciscord/models/channel_model.dart';
 import 'package:ciscord/provider/channel_provider.dart';
+import 'package:ciscord/widgets/add_channel.dart';
 import 'package:ciscord/widgets/channel_tile.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class ChannelDrawer extends ConsumerStatefulWidget {
@@ -72,6 +75,15 @@ class _ChannelDrawerState extends ConsumerState<ChannelDrawer> {
     loadUserCard();
   }
 
+  void createChannel() async {
+    Channel channelDetails = await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const AddChannel(),
+      ),
+    );
+    ref.watch(channelData.notifier).addChannelDirect(channelDetails);
+  }
+
   @override
   Widget build(BuildContext context) {
     final channelSet = ref.watch(channelData);
@@ -93,6 +105,22 @@ class _ChannelDrawerState extends ConsumerState<ChannelDrawer> {
                   ownId: channelSet[index].id,
                 );
               },
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 10),
+            child: OutlinedButton.icon(
+              onPressed: createChannel,
+              icon: const Icon(
+                Icons.add,
+                color: Colors.white,
+              ),
+              label: Text(
+                "create channel",
+                style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                      color: Colors.white,
+                    ),
+              ),
             ),
           ),
         ],
