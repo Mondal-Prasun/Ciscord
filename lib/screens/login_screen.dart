@@ -19,6 +19,22 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _isUser = false;
   bool _checking = false;
 
+  @override
+  void initState() {
+    super.initState();
+    FirebaseAuth.instance.authStateChanges().listen((user) {
+      if (user == null) {
+        return;
+      } else {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => const DefaultScreen(),
+          ),
+        );
+      }
+    });
+  }
+
 //MARK: auth method
   void onSubmit() async {
     if (_fromkey.currentState!.validate()) {
