@@ -6,5 +6,5 @@ class Channel {
 
   final String channelName;
   final String description;
-  final String id;
+  String id;
 }

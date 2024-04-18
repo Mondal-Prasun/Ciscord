@@ -36,7 +36,7 @@ class _ChannelDrawerState extends ConsumerState<ChannelDrawer> {
     FirebaseAuth.instance.authStateChanges().listen((user) async {
       if (user != null) {
         _userId = user.uid;
-
+        ref.read(channelData.notifier).loadChannels(_userId!);
         final storageRef = FirebaseStorage.instance.ref();
 
         storageRef
@@ -74,7 +74,6 @@ class _ChannelDrawerState extends ConsumerState<ChannelDrawer> {
   void initState() {
     super.initState();
     loadUserCard();
-    ref.read(channelData.notifier).loadChannels();
   }
 
   void createChannel() async {
