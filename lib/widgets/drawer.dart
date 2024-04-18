@@ -31,11 +31,13 @@ class _ChannelDrawerState extends ConsumerState<ChannelDrawer> {
     ),
   );
   String? _userId;
+  String? _userName;
 
   void loadUserCard() {
     FirebaseAuth.instance.authStateChanges().listen((user) async {
       if (user != null) {
         _userId = user.uid;
+        _userName = user.displayName;
         ref.watch(channelData.notifier).loadChannels(_userId!);
         final storageRef = FirebaseStorage.instance.ref();
 
@@ -158,6 +160,8 @@ class _ChannelDrawerState extends ConsumerState<ChannelDrawer> {
                 return ChannelTile(
                   channelName: channelSet[index].channelName,
                   ownId: channelSet[index].id,
+                  userId: _userId ?? "userid",
+                  userName: _userName ?? "user",
                 );
               },
             ),

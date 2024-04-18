@@ -10,9 +10,13 @@ class ChatScreen extends ConsumerStatefulWidget {
     super.key,
     required this.channelName,
     required this.channelId,
+    required this.userId,
+    required this.userName,
   });
   final String channelName;
   final String channelId;
+  final String userId;
+  final String userName;
   @override
   ConsumerState<ChatScreen> createState() {
     return _ChatScreenState();
@@ -35,9 +39,12 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         _fromKey.currentState!.save();
       }
 
-      ref
-          .read(chatData.notifier)
-          .getChat(msg: _msg, channelId: widget.channelId, userId: "UsedId");
+      ref.watch(chatData.notifier).getChat(
+            msg: _msg,
+            channelId: widget.channelId,
+            userId: widget.userId,
+            userName: widget.userName,
+          );
 
       print(_msg);
     }

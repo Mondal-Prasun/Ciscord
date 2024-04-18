@@ -6,10 +6,14 @@ class ChannelTile extends StatelessWidget {
     super.key,
     required this.channelName,
     required this.ownId,
+    required this.userId,
+    required this.userName,
   });
 
   final String channelName;
   final String ownId;
+  final String userId;
+  final String userName;
 
   @override
   Widget build(BuildContext context) {
@@ -20,6 +24,8 @@ class ChannelTile extends StatelessWidget {
             builder: (context) => ChatScreen(
               channelName: channelName,
               channelId: ownId,
+              userId: userId,
+              userName: userName,
             ),
           ),
         );
