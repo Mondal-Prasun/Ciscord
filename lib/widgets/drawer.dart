@@ -36,7 +36,7 @@ class _ChannelDrawerState extends ConsumerState<ChannelDrawer> {
     FirebaseAuth.instance.authStateChanges().listen((user) async {
       if (user != null) {
         _userId = user.uid;
-        ref.read(channelData.notifier).loadChannels(_userId!);
+        ref.watch(channelData.notifier).loadChannels(_userId!);
         final storageRef = FirebaseStorage.instance.ref();
 
         storageRef
@@ -83,10 +83,20 @@ class _ChannelDrawerState extends ConsumerState<ChannelDrawer> {
       ),
     );
 
-    ref.watch(channelData.notifier).addChannelDirect(
+    final added = await ref.watch(channelData.notifier).addChannelDirect(
           channelDetails,
           _userId!,
         );
+    Navigator.of(context).pop();
+
+    if (added == true) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text("Channel added")));
+    } else {
+      ScaffoldMessenger.of(context).clearSnackBars();
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text("Something went wrong")));
+    }
   }
 
   void logOutUser() {

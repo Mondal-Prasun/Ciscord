@@ -13,13 +13,33 @@ class ChannelProvider extends StateNotifier<List<Channel>> {
   ChannelProvider() : super([]);
 
   void loadChannels(String userId) async {
+    List<Channel> userAddedChannels = [];
+
     final userChannelRef = rtdb.ref("users/$userId/userChannels");
-    userChannelRef.onValue.listen((event) {
-      for (final channel in event.snapshot.children) {
+    userChannelRef.onValue.listen((event1) {
+      for (final channel in event1.snapshot.children) {
         final value = channel.value as Map;
         final channelRef = rtdb.ref("channels/${value["channelId"]}");
-        channelRef.onValue.listen((event) {
-          print(event.snapshot.value);
+        channelRef.onValue.listen((event2) {
+          final channelValue = event2.snapshot.value as Map;
+          final gainedChannel = Channel(
+              channelName: channelValue["name"],
+              description: channelValue["description"])
+            ..id = value["channelId"];
+
+          if (userAddedChannels.isEmpty) {
+            userAddedChannels.add(gainedChannel);
+          } else {
+            for (final e in userAddedChannels) {
+              if (e.id != value["channelId"]) {
+                userAddedChannels.add(gainedChannel);
+              }
+            }
+          }
+
+          if (userAddedChannels.isNotEmpty) {
+            state = userAddedChannels;
+          }
         });
       }
     });
@@ -32,21 +52,24 @@ class ChannelProvider extends StateNotifier<List<Channel>> {
     state = [...state, channel];
   }
 
-  void addChannelDirect(Channel channel, String userId) async {
-    final channelRef = rtdb.ref("channels/${channel.id}");
+  Future<bool> addChannelDirect(Channel channel, String userId) async {
+    try {
+      final channelRef = rtdb.ref("channels/${channel.id}");
 
-    await channelRef.set({
-      "name": "${channel.channelName}",
-      "description": "${channel.description}",
-    });
+      await channelRef.set({
+        "name": "${channel.channelName}",
+        "description": "${channel.description}",
+      });
 
-    final userRef = rtdb.ref("users/$userId/userChannels");
-    final userChannelref = userRef.push();
-    await userChannelref.set({
-      "channelId": channel.id,
-    });
-
-    state = [...state, channel];
+      final userRef = rtdb.ref("users/$userId/userChannels");
+      final userChannelref = userRef.push();
+      await userChannelref.set({
+        "channelId": channel.id,
+      });
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 }
 
