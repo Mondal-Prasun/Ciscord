@@ -57,8 +57,8 @@ class ChannelProvider extends StateNotifier<List<Channel>> {
       final channelRef = rtdb.ref("channels/${channel.id}");
 
       await channelRef.set({
-        "name": "${channel.channelName}",
-        "description": "${channel.description}",
+        "name": channel.channelName,
+        "description": channel.description,
       });
 
       final userRef = rtdb.ref("users/$userId/userChannels");
@@ -70,6 +70,22 @@ class ChannelProvider extends StateNotifier<List<Channel>> {
     } catch (e) {
       return false;
     }
+  }
+
+  Future<String> getchannel(String channelId) async {
+    final value = await rtdb.ref("channels/$channelId").onValue.first;
+    final channel = value.snapshot.value! as Map;
+    return channel["name"];
+  }
+
+  void addExcistingChannelToUser(String channelId, String userId) async {
+    final userRef = rtdb.ref("users/$userId/userChannels");
+
+    final userChannelref = userRef.push();
+    await userChannelref.set({
+      "channelId": channelId,
+    });
+    print("done");
   }
 }
 

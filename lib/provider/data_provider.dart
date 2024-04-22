@@ -1,25 +1,37 @@
 import 'package:ciscord/models/chat_model.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-final firebaseApp = Firebase.app();
-final rtdb = FirebaseDatabase.instanceFor(
-    app: firebaseApp,
-    databaseURL:
-        'https://ciscord-74ece-default-rtdb.asia-southeast1.firebasedatabase.app/');
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class DataProvider extends StateNotifier<List<Chat>> {
   DataProvider() : super([]);
 
-  void getChat(
+  void sendChat(
       {required String msg,
       required String channelId,
       required String userId,
-      required String userName}) {
+      required String userName,
+      required String userImage}) async {
     final Chat data = Chat(
-        message: msg, channelId: channelId, userId: userId, userName: userName);
-    state = [...state, data];
+        message: msg,
+        channelId: channelId,
+        userId: userId,
+        userName: userName,
+        userImage: userImage);
+
+    await FirebaseFirestore.instance
+        .collection("channel_${data.channelId}")
+        .add({
+      "createdAt": data.createdAt,
+      "msg": data.message,
+      "channelId": data.channelId,
+      "userId": data.userId,
+      "userName": data.userName,
+      "userImage": data.userImage,
+      "postId": data.postId,
+    });
+
+    print("done");
   }
 }
 

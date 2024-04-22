@@ -8,12 +8,14 @@ class ChannelTile extends StatelessWidget {
     required this.ownId,
     required this.userId,
     required this.userName,
+    required this.userImage,
   });
 
   final String channelName;
   final String ownId;
   final String userId;
   final String userName;
+  final String userImage;
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +28,7 @@ class ChannelTile extends StatelessWidget {
               channelId: ownId,
               userId: userId,
               userName: userName,
+              userImage: userImage,
             ),
           ),
         );

@@ -1,5 +1,6 @@
 import 'package:ciscord/models/channel_model.dart';
 import 'package:ciscord/provider/channel_provider.dart';
+import 'package:ciscord/screens/default_screen.dart';
 import 'package:ciscord/screens/login_screen.dart';
 import 'package:ciscord/widgets/add_channel.dart';
 import 'package:ciscord/widgets/channel_tile.dart';
@@ -32,6 +33,7 @@ class _ChannelDrawerState extends ConsumerState<ChannelDrawer> {
   );
   String? _userId;
   String? _userName;
+  String? _userImage;
 
   void loadUserCard() {
     FirebaseAuth.instance.authStateChanges().listen((user) async {
@@ -45,25 +47,35 @@ class _ChannelDrawerState extends ConsumerState<ChannelDrawer> {
             .child("images/${user.uid}/userImage")
             .getDownloadURL()
             .then((imageUrl) {
+          _userImage = imageUrl;
           setState(() {
-            userCard = Card(
-              child: Column(
-                children: [
-                  SizedBox(
-                    height: 150,
-                    width: double.infinity,
-                    child: Image.network(
-                      imageUrl,
-                      fit: BoxFit.cover,
+            userCard = InkWell(
+              onTap: () {
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (context) => const DefaultScreen(),
+                  ),
+                );
+              },
+              child: Card(
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: 150,
+                      width: double.infinity,
+                      child: Image.network(
+                        imageUrl,
+                        fit: BoxFit.cover,
+                      ),
                     ),
-                  ),
-                  Text(
-                    user.displayName!,
-                    style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                  ),
-                ],
+                    Text(
+                      user.displayName!,
+                      style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                    ),
+                  ],
+                ),
               ),
             );
           });
@@ -162,6 +174,7 @@ class _ChannelDrawerState extends ConsumerState<ChannelDrawer> {
                   ownId: channelSet[index].id,
                   userId: _userId ?? "userid",
                   userName: _userName ?? "user",
+                  userImage: _userImage ?? "userImage",
                 );
               },
             ),

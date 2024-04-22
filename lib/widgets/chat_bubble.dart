@@ -1,9 +1,16 @@
 import 'package:flutter/material.dart';
 
 class ChatBubble extends StatefulWidget {
-  const ChatBubble({super.key, required this.msg, required this.date});
+  const ChatBubble(
+      {super.key,
+      required this.imgUrl,
+      required this.msg,
+      required this.date,
+      required this.userName});
   final String msg;
   final String date;
+  final String userName;
+  final String imgUrl;
   @override
   State<ChatBubble> createState() {
     return _ChatBubbleState();
@@ -17,8 +24,8 @@ class _ChatBubbleState extends State<ChatBubble> {
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Row(
         children: [
-          const CircleAvatar(
-            backgroundColor: Colors.green,
+          CircleAvatar(
+            child: Image(image: NetworkImage(widget.imgUrl)),
           ),
           Container(
             alignment: Alignment.topLeft,
@@ -31,9 +38,9 @@ class _ChatBubbleState extends State<ChatBubble> {
               children: [
                 Row(
                   children: [
-                    const Text(
-                      "Name",
-                      style: TextStyle(
+                    Text(
+                      widget.userName,
+                      style: const TextStyle(
                         color: Colors.white,
                       ),
                     ),

@@ -1,8 +1,11 @@
-import 'package:ciscord/models/chat_model.dart';
 import 'package:ciscord/provider/data_provider.dart';
 import 'package:ciscord/widgets/chat_bubble.dart';
+
 import 'package:ciscord/widgets/drawer.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class ChatScreen extends ConsumerStatefulWidget {
@@ -12,11 +15,13 @@ class ChatScreen extends ConsumerStatefulWidget {
     required this.channelId,
     required this.userId,
     required this.userName,
+    required this.userImage,
   });
   final String channelName;
   final String channelId;
   final String userId;
   final String userName;
+  final String userImage;
   @override
   ConsumerState<ChatScreen> createState() {
     return _ChatScreenState();
@@ -29,24 +34,22 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final List<Chat> data = ref
-        .watch(chatData)
-        .where((e) => e.channelId == widget.channelId)
-        .toList();
-
     void submit() {
       if (_fromKey.currentState!.validate()) {
         _fromKey.currentState!.save();
       }
+      // ref.watch(chatData.notifier).loadChats(widget.channelId);
 
-      ref.watch(chatData.notifier).getChat(
+      ref.read(chatData.notifier).sendChat(
             msg: _msg,
             channelId: widget.channelId,
             userId: widget.userId,
             userName: widget.userName,
+            userImage: widget.userImage,
           );
 
-      print(_msg);
+      _fromKey.currentState!.reset();
+      FocusScope.of(context).unfocus();
     }
 
     return Scaffold(
@@ -54,6 +57,20 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         backgroundColor: Theme.of(context).colorScheme.background,
         foregroundColor: Colors.white,
         title: Text(widget.channelName),
+        actions: [
+          IconButton(
+            onPressed: () async {
+              Clipboard.setData(
+                ClipboardData(text: widget.channelId),
+              ).then((value) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("Channel id Coppied")),
+                );
+              });
+            },
+            icon: const Icon(Icons.copy),
+          ),
+        ],
       ),
       drawer: const ChannelDrawer(),
       body: Stack(
@@ -62,14 +79,38 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             padding: const EdgeInsets.only(
               bottom: 80,
             ),
-            child: ListView.builder(
-              itemCount: data.length,
-              itemBuilder: (context, index) {
-                return Expanded(
-                  child: ChatBubble(
-                    msg: data[index].message,
-                    date: data[index].date,
-                  ),
+            child: StreamBuilder(
+              stream: FirebaseFirestore.instance
+                  .collection("channel_${widget.channelId}")
+                  .orderBy("createdAt", descending: false)
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                  return const Center(
+                    child: Text(
+                      "No message found",
+                      style: TextStyle(fontSize: 30, color: Colors.white),
+                    ),
+                  );
+                }
+
+                return ListView.builder(
+                  itemCount: snapshot.data!.docs.length,
+                  itemBuilder: (context, index) {
+                    return ChatBubble(
+                      imgUrl: snapshot.data!.docs.toList()[index]["userImage"],
+                      msg:
+                          snapshot.data!.docs.toList()[index]["msg"].toString(),
+                      date: snapshot.data!.docs
+                          .toList()[index]["createdAt"]
+                          .toString(),
+                      userName: snapshot.data!.docs.toList()[index]["userName"],
+                    );
+                  },
                 );
               },
             ),
@@ -110,8 +151,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                             maxLines: null,
                             keyboardType: TextInputType.multiline,
                             decoration: const InputDecoration(
-                              border: InputBorder.none,
-                            ),
+                                border: InputBorder.none,
+                                hintText: "Enter message"),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return "Please enter something";
